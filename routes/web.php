@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\VideoController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,5 +20,10 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::resource('videos', VideoController::class);
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/progress/{videoId}', [ProgressController::class, 'update'])->name('progress.update');
+    Route::get('/progress/watched-time', [ProgressController::class, 'watchedTime'])->name('progress.watched-time');
+});
 
 require __DIR__.'/auth.php';
