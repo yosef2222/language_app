@@ -9,6 +9,7 @@
         <table>
             <thead>
             <tr>
+                <th>Thumbnail</th>
                 <th>Title</th>
                 <th>Actions</th>
             </tr>
@@ -16,6 +17,11 @@
             <tbody>
             @foreach ($videos as $video)
                 <tr>
+                    <td>
+                        <a href="{{ route('videos.show', $video->id) }}">
+                            <img src="{{ $video->thumbnail_url }}" alt="{{ $video->title }}" style="width: 150px; height: auto;">
+                        </a>
+                    </td>
                     <td>{{ $video->title }}</td>
                     <td>
                         <a href="{{ route('videos.show', $video->id) }}">View</a>
