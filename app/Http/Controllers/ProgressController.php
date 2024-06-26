@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Video;
 use Illuminate\Http\Request;
 use App\Models\Progress;
 use Illuminate\Support\Facades\Auth;
@@ -10,9 +11,15 @@ class ProgressController extends Controller
 {
     public function update(Request $request, $videoId)
     {
-        $validatedData = $request->validate([
-            'duration_watched' => 'required|integer|min:0', // Validate duration watched
-        ]);
+        // Fetch the video details to get the duration
+        $video = Video::findOrFail($videoId);
+
+        // Validate that the video has a duration attribute and it's an integer
+        if (!isset($video->duration) || !is_int($video->duration)) {
+            return response()->json(['error' => 'Invalid video duration'], 400);
+        }
+
+        $durationWatched = $video->duration;
 
         // Find or create progress record for the user and video
         $progress = Progress::updateOrCreate(
@@ -21,12 +28,12 @@ class ProgressController extends Controller
                 'video_id' => $videoId,
             ],
             [
-                'duration_watched' => $validatedData['duration_watched'],
+                'duration_watched' => $durationWatched,
             ]
         );
 
-        // Optionally, you can return a response or redirect back
-        return response()->json(['message' => 'Progress updated successfully']);
+        // Return a JSON response indicating success
+        return redirect()->route('dashboard');
     }
 
     public function watchedTime()
@@ -38,7 +45,7 @@ class ProgressController extends Controller
             $hours = floor($totalSeconds / 3600);
             $minutes = floor(($totalSeconds % 3600) / 60);
 
-            return view('progress.watched-time', compact('hours', 'minutes'));
+            return view('dashboard', compact('hours', 'minutes'));
         }
 
         return redirect()->route('login');

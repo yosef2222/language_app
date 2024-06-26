@@ -7,9 +7,26 @@ use Illuminate\Http\Request;
 
 class VideoController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $videos = Video::all();
+        $query = Video::query();
+
+        // Filtering by category
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+
+        // Filtering by level
+        if ($request->filled('level')) {
+            $query->where('level', $request->level);
+        }
+
+        // Sorting by date
+        $sort_by = $request->input('sort_by', 'desc'); // Default to newest first
+        $query->orderBy('created_at', $sort_by);
+
+        $videos = $query->get();
+
         return view('videos.index', compact('videos'));
     }
 
@@ -23,8 +40,7 @@ class VideoController extends Controller
         $request->validate([
             'youtube_id' => 'required|unique:videos',
             'title' => 'required',
-            'channel_id' => 'required',
-            'channel_title' => 'required',
+            'duration' => 'required',
         ]);
 
         Video::create($request->all());
@@ -47,8 +63,7 @@ class VideoController extends Controller
         $request->validate([
             'youtube_id' => 'required|unique:videos,youtube_id,' . $video->id,
             'title' => 'required',
-            'channel_id' => 'required',
-            'channel_title' => 'required',
+            'duration' => 'required',
         ]);
 
         $video->update($request->all());

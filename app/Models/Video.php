@@ -18,13 +18,7 @@ class Video extends Model
         'description',
         'thumbnail_url',
         'duration',
-        'channel_id',
-        'channel_title',
-        'published_at'
-    ];
-
-    // Specify the fields that should be cast to native types
-    protected $casts = [
-        'published_at' => 'datetime',
+        'level',
+        'category',
     ];
 }

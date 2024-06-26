@@ -17,9 +17,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('thumbnail_url')->nullable();
-            $table->integer('duration')->nullable();
-            $table->string('channel_id');
-            $table->string('channel_title');
+            $table->integer('duration');
             $table->timestamp('published_at')->nullable();
             $table->timestamps();
         });
